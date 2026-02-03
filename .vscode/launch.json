@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "name": "Run main.py",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "env": {
+        "GOOGLE_API_KEY": "AIzaSyB-FiviAAK4TBO4BnYk50oIlevra_f14ek"
+      }
+    }
+  ]
+}
