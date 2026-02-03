@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
@@ -6,8 +7,12 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
-# 1. SETUP API KEY
-os.environ["GOOGLE_API_KEY"] = "AIzaSyB-FiviAAK4TBO4BnYk50oIlevra_f14ek"
+# Load environment variables from .env file
+load_dotenv()
+
+# Verify API key is loaded
+if not os.getenv("GOOGLE_API_KEY"):
+    raise ValueError("GOOGLE_API_KEY not found in environment variables. Please check your .env file.")
 
 def start_caregraph():
     print("--- Loading CareGraph reasoning engine ---")
