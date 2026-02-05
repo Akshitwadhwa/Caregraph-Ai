@@ -11,6 +11,15 @@
       "env": {
         "GOOGLE_API_KEY": "AIzaSyB-FiviAAK4TBO4BnYk50oIlevra_f14ek"
       }
+    },
+    {
+      "name": "Run web_app.py (FastAPI)",
+      "type": "python",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["web_app:app", "--reload", "--port", "8000"],
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }

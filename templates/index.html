@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareGraph AI</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div class="brand">CareGraph AI</div>
+        <div class="subtitle">Clinical decision support with guideline-backed answers</div>
+      </header>
+
+      <section class="panel">
+        <div class="chat" id="chat">
+          <div class="msg assistant">
+            <div class="role">CareGraph</div>
+            <div class="bubble">
+              Ask a medical question to get an answer grounded in your indexed PDFs.
+            </div>
+          </div>
+        </div>
+
+        <form class="composer" id="composer">
+          <textarea
+            id="question"
+            placeholder="Ask a question (e.g., What is diabetes?)"
+            rows="2"
+          ></textarea>
+          <div class="actions">
+            <button type="submit" id="send">Ask</button>
+          </div>
+        </form>
+        <div class="hint">
+          This is not medical advice. Always consult a qualified clinician.
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
