@@ -62,10 +62,10 @@ composer.addEventListener("submit", async (event) => {
         "Disclaimer:",
         data.disclaimer || "",
         "",
-        "Rationale:",
+        "My output:",
         data.rationale || "",
         "",
-        "OK Report:",
+        "Final Report:",
         data.ok_report || "",
       ].join("\n");
       addMessage("assistant", text.trim());
