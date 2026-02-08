@@ -6,6 +6,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from config import get_faiss_dir
 
 _QA_CHAIN = None
 _INIT_ERROR = None
@@ -18,11 +19,12 @@ def _build_chain():
     if not api_key:
         raise ValueError("GOOGLE_API_KEY not found in environment variables. Please check your .env file.")
 
-    if not os.path.exists("medical_db"):
-        raise FileNotFoundError("medical_db folder not found. Please run ingest.py first.")
+    faiss_dir = get_faiss_dir()
+    if not os.path.exists(faiss_dir):
+        raise FileNotFoundError(f"{faiss_dir} folder not found. Please run ingest.py first.")
 
     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-    vector_db = FAISS.load_local("medical_db", embeddings, allow_dangerous_deserialization=True)
+    vector_db = FAISS.load_local(faiss_dir, embeddings, allow_dangerous_deserialization=True)
 
     llm = ChatGoogleGenerativeAI(
         model="models/gemini-2.5-flash",

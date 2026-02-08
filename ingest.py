@@ -3,6 +3,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings 
 from langchain_community.vectorstores import FAISS
+from config import get_faiss_dir
 
 def build_medical_knowledge_base():
     # 1. Initialize Free Local Embeddings
@@ -47,8 +48,9 @@ def build_medical_knowledge_base():
             documents=all_docs,
             embedding=embeddings
         )
-        vector_db.save_local("./medical_db")
-        print("--- Success! medical_db folder created. ---")
+        faiss_dir = get_faiss_dir()
+        vector_db.save_local(faiss_dir)
+        print(f"--- Success! {faiss_dir} folder created. ---")
     else:
         print("No document content found to index.")
 
