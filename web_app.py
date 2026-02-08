@@ -24,6 +24,8 @@ async def ask(payload: dict):
     try:
         chain = get_chain()
         answer = chain.invoke(question)
-        return {"answer": answer}
+        if isinstance(answer, dict):
+            return answer
+        return JSONResponse({"error": "Model did not return valid JSON."}, status_code=500)
     except Exception as exc:
         return JSONResponse({"error": str(exc)}, status_code=500)

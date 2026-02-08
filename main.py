@@ -1,3 +1,4 @@
+import json
 from caregraph import get_chain
 
 def start_caregraph():
@@ -19,7 +20,10 @@ def start_caregraph():
         try:
             print("\nCareGraph: Searching medical guidelines...")
             response = qa_chain.invoke(user_input)
-            print(f"\n{response}")
+            if isinstance(response, dict):
+                print(f"\n{json.dumps(response, indent=2)}")
+            else:
+                print(f"\n{response}")
         except Exception as e:
             print(f"\nAn error occurred: {e}")
             print("Tip: Check if your API Key is valid and you have 'Generative AI' enabled in Google AI Studio.")

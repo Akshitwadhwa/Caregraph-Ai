@@ -49,7 +49,17 @@ composer.addEventListener("submit", async (event) => {
       const last = chat.lastChild?.querySelector(".bubble");
       if (last) last.classList.add("error");
     } else {
-      addMessage("assistant", data.answer);
+      const text = [
+        "Disclaimer:",
+        data.disclaimer || "",
+        "",
+        "Rationale:",
+        data.rationale || "",
+        "",
+        "OK Report:",
+        data.ok_report || "",
+      ].join("\n");
+      addMessage("assistant", text.trim());
     }
   } catch (error) {
     addMessage("assistant", "Network error. Please try again.");

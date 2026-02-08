@@ -4,12 +4,19 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from pydantic import BaseModel, Field
 from config import get_faiss_dir
 
 _QA_CHAIN = None
 _INIT_ERROR = None
+
+
+class CareGraphResponse(BaseModel):
+    disclaimer: str = Field(description="Medical disclaimer")
+    rationale: str = Field(description="Reasoning grounded in guidelines")
+    ok_report: str = Field(description="Concise clinical summary and next steps")
 
 
 def _build_chain():
@@ -31,6 +38,8 @@ def _build_chain():
         temperature=0.1,
     )
 
+    parser = JsonOutputParser(pydantic_object=CareGraphResponse)
+
     template = """
     You are 'CareGraph AI', a professional clinical decision support assistant.
     Use the following pieces of medical context to answer the user's question.
@@ -44,11 +53,15 @@ def _build_chain():
     INSTRUCTIONS:
     - If the context doesn't have the answer, say you don't know based on the current docs.
     - Start with a medical disclaimer.
+    - Output must be valid JSON and match this schema:
+    {format_instructions}
 
-    FINAL RESPONSE:
+    JSON RESPONSE:
     """
 
-    prompt = ChatPromptTemplate.from_template(template)
+    prompt = ChatPromptTemplate.from_template(template).partial(
+        format_instructions=parser.get_format_instructions()
+    )
 
     def format_docs(docs):
         return "\n\n".join(doc.page_content for doc in docs)
@@ -59,7 +72,7 @@ def _build_chain():
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
         | llm
-        | StrOutputParser()
+        | parser
     )
 
     return qa_chain

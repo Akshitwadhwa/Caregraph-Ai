@@ -66,6 +66,7 @@ body {
   border-radius: 14px;
   background: #f1f5ff;
   line-height: 1.5;
+  white-space: pre-wrap;
 }
 
 .msg.user .bubble {
