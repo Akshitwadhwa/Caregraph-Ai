@@ -10,6 +10,7 @@ CareGraph AI is a clinical decision support assistant that grounds answers in yo
 2. Local embeddings using `all-MiniLM-L6-v2`
 3. FAISS vector store for fast retrieval
 4. Structured JSON responses with medical disclaimer, rationale, and report
+5. Web UI supports text, PDF uploads, and lab image uploads
 
 ## Tech Stack
 1. LangChain (LCEL + Runnables)
@@ -81,6 +82,11 @@ Responses are JSON with fields:
 ./venv/bin/python -m uvicorn web_app:app --reload --port 8000
 ```
 Open `http://127.0.0.1:8000`.
+
+### Uploads (PDF + Image)
+1. Use the upload form in the web UI.
+2. PDF uploads are saved into `data/` and re-indexed.
+3. Image uploads are analyzed via Gemini Vision and returned as JSON.
 
 ## Notes
 1. The embeddings model may download on first run if not cached.

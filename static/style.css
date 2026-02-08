@@ -80,6 +80,33 @@ body {
   margin-top: 20px;
 }
 
+.uploader {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e6eaf2;
+}
+
+.upload-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.file-field {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+  color: #4f5b72;
+}
+
+.file-field input[type="file"] {
+  border: 1px dashed #c9d2e3;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f7f9fd;
+}
+
 textarea {
   width: 100%;
   border: 1px solid #d4d9e5;

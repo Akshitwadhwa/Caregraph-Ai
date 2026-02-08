@@ -18,7 +18,7 @@
           <div class="msg assistant">
             <div class="role">CareGraph</div>
             <div class="bubble">
-              Ask a medical question to get an answer grounded in your indexed PDFs.
+              Ask a medical question or upload PDFs / lab images to get grounded answers.
             </div>
           </div>
         </div>
@@ -31,6 +31,22 @@
           ></textarea>
           <div class="actions">
             <button type="submit" id="send">Ask</button>
+          </div>
+        </form>
+
+        <form class="uploader" id="uploader">
+          <div class="upload-grid">
+            <label class="file-field">
+              <span>Upload PDFs (guidelines)</span>
+              <input id="pdfs" type="file" accept=".pdf" multiple />
+            </label>
+            <label class="file-field">
+              <span>Upload Lab Image (JPG/PNG)</span>
+              <input id="image" type="file" accept="image/*" />
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit" id="upload">Upload</button>
           </div>
         </form>
         <div class="hint">

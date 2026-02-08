@@ -2,6 +2,10 @@ const chat = document.getElementById("chat");
 const composer = document.getElementById("composer");
 const questionInput = document.getElementById("question");
 const sendButton = document.getElementById("send");
+const uploader = document.getElementById("uploader");
+const pdfInput = document.getElementById("pdfs");
+const imageInput = document.getElementById("image");
+const uploadButton = document.getElementById("upload");
 
 function addMessage(role, text) {
   const wrapper = document.createElement("div");
@@ -24,6 +28,11 @@ function addMessage(role, text) {
 function setLoading(isLoading) {
   sendButton.disabled = isLoading;
   sendButton.textContent = isLoading ? "Thinking..." : "Ask";
+}
+
+function setUploading(isUploading) {
+  uploadButton.disabled = isUploading;
+  uploadButton.textContent = isUploading ? "Uploading..." : "Upload";
 }
 
 composer.addEventListener("submit", async (event) => {
@@ -67,5 +76,64 @@ composer.addEventListener("submit", async (event) => {
     if (last) last.classList.add("error");
   } finally {
     setLoading(false);
+  }
+});
+
+uploader.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const pdfs = pdfInput.files;
+  const image = imageInput.files[0];
+
+  if (!pdfs.length && !image) {
+    addMessage("assistant", "Please select a PDF and/or image to upload.");
+    const last = chat.lastChild?.querySelector(".bubble");
+    if (last) last.classList.add("error");
+    return;
+  }
+
+  setUploading(true);
+
+  const form = new FormData();
+  for (const pdf of pdfs) {
+    form.append("pdfs", pdf);
+  }
+  if (image) {
+    form.append("image", image);
+  }
+
+  try {
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: form,
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      addMessage("assistant", data.error || "Upload failed.");
+      const last = chat.lastChild?.querySelector(".bubble");
+      if (last) last.classList.add("error");
+    } else if (data.status) {
+      addMessage("assistant", data.status);
+    } else {
+      const text = [
+        "Disclaimer:",
+        data.disclaimer || "",
+        "",
+        "Rationale:",
+        data.rationale || "",
+        "",
+        "OK Report:",
+        data.ok_report || "",
+      ].join("\n");
+      addMessage("assistant", text.trim());
+    }
+  } catch (error) {
+    addMessage("assistant", "Network error. Please try again.");
+    const last = chat.lastChild?.querySelector(".bubble");
+    if (last) last.classList.add("error");
+  } finally {
+    setUploading(false);
+    pdfInput.value = "";
+    imageInput.value = "";
   }
 });
