@@ -8,12 +8,23 @@ __pycache__/
 *.so
 .Python
 venv/
+.venv/
 env/
 ENV/
+dist/
+build/
+*.egg-info/
 
-# Vector databases
+# Vector databases (regenerated via ingest.py)
 medical_db/
 faiss_index/
+
+# Uploads (user-generated)
+uploads/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
 
 # IDE
 .vscode/

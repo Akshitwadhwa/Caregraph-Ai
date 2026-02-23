@@ -7,10 +7,9 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from pydantic import BaseModel, Field
-from config import get_faiss_dir
+from config import get_faiss_dir, EMBEDDING_MODEL, GEMINI_MODEL, logger
 
 _QA_CHAIN = None
-_INIT_ERROR = None
 
 
 class CareGraphResponse(BaseModel):
@@ -30,11 +29,11 @@ def _build_chain():
     if not os.path.exists(faiss_dir):
         raise FileNotFoundError(f"{faiss_dir} folder not found. Please run ingest.py first.")
 
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
     vector_db = FAISS.load_local(faiss_dir, embeddings, allow_dangerous_deserialization=True)
 
     llm = ChatGoogleGenerativeAI(
-        model="models/gemini-2.5-flash",
+        model=GEMINI_MODEL,
         temperature=0.1,
     )
 
@@ -79,15 +78,16 @@ def _build_chain():
 
 
 def get_chain():
-    global _QA_CHAIN, _INIT_ERROR
+    """Return the cached QA chain, rebuilding on each call if previous init failed."""
+    global _QA_CHAIN
     if _QA_CHAIN is not None:
         return _QA_CHAIN
-    if _INIT_ERROR is not None:
-        raise _INIT_ERROR
 
     try:
+        logger.info("Building QA chain…")
         _QA_CHAIN = _build_chain()
+        logger.info("QA chain ready.")
         return _QA_CHAIN
     except Exception as exc:
-        _INIT_ERROR = exc
+        logger.error("Chain init failed: %s", exc)
         raise

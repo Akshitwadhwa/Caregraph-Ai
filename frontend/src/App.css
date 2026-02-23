@@ -291,3 +291,74 @@
     opacity: 1;
   }
 }
+
+/* ── Mobile Responsive ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .header {
+    padding: 16px;
+  }
+
+  .brand-title {
+    font-size: 22px;
+  }
+
+  .brand-subtitle {
+    font-size: 13px;
+  }
+
+  .chat-container {
+    padding: 16px 12px 100px 12px;
+    gap: 16px;
+  }
+
+  .msg-user {
+    max-width: 85%;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .msg-assistant-wrapper {
+    max-width: 95%;
+    gap: 10px;
+  }
+
+  .ai-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .command-bar-wrapper {
+    padding: 0 12px 12px 12px;
+  }
+
+  .command-bar {
+    padding: 8px;
+    border-radius: 18px;
+  }
+
+  .chat-input {
+    font-size: 14px;
+  }
+}
+
+/* ── Dark-mode overrides ─────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .ai-message-error {
+    background-color: #451a1a;
+    border-color: #7f1d1d;
+    color: #fca5a5;
+  }
+
+  .icon-button:hover {
+    background-color: #334155;
+  }
+
+  .attachment-chip {
+    background-color: #334155;
+    border-color: var(--border-light);
+  }
+
+  .command-bar-wrapper {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 1) 30%);
+  }
+}

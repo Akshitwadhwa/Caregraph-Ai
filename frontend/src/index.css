@@ -60,3 +60,38 @@ input, textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* ── Dark Mode ────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #2dd4bf;
+    --primary-hover: #14b8a6;
+    --secondary: #38bdf8;
+    --danger: #f87171;
+    --warning: #fbbf24;
+
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-light: #64748b;
+
+    --border-light: #334155;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  }
+
+  body {
+    color-scheme: dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+  }
+}

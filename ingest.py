@@ -1,14 +1,17 @@
 import os
+import logging
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings 
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
-from config import get_faiss_dir
+from config import get_faiss_dir, EMBEDDING_MODEL
+
+logger = logging.getLogger("caregraph.ingest")
 
 def build_medical_knowledge_base():
     # 1. Initialize Free Local Embeddings
-    print("--- Initializing Embeddings (HuggingFace) ---")
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    logger.info("Initializing embeddings (%s)…", EMBEDDING_MODEL)
+    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
     
     # 2. Setup Text Splitter
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)

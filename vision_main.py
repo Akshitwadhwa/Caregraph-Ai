@@ -7,19 +7,25 @@ and produces a combined medical reasoning response.
 
 import os
 import base64
+import logging
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_core.messages import HumanMessage
-from config import get_faiss_dir
+from config import get_faiss_dir, EMBEDDING_MODEL, GEMINI_MODEL
+
+logger = logging.getLogger("caregraph.vision")
 
 # ── Config ────────────────────────────────────────────────────────────
 IMAGE_PATH = "test_lab.jpg"
 FAISS_DIR = get_faiss_dir()
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-VISION_MODEL = "models/gemini-2.5-flash"
-REASONING_MODEL = "models/gemini-2.5-flash"
+VISION_MODEL = GEMINI_MODEL
+REASONING_MODEL = GEMINI_MODEL
+
+# ── Cached FAISS resources ────────────────────────────────────────────
+_FAISS_DB = None
+_FAISS_EMBEDDINGS = None
 
 
 def encode_image_to_base64(path: str) -> str:
@@ -60,13 +66,23 @@ def extract_biomarkers(llm, image_b64: str) -> str:
 
 
 def search_faiss(query: str, k: int = 4):
-    """Load the FAISS index and return the top-k relevant document chunks."""
-    embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    vector_db = FAISS.load_local(
-        FAISS_DIR, embeddings, allow_dangerous_deserialization=True
-    )
-    results = vector_db.similarity_search(query, k=k)
+    """Load the FAISS index (cached) and return the top-k relevant document chunks."""
+    global _FAISS_DB, _FAISS_EMBEDDINGS
+    if _FAISS_DB is None:
+        logger.info("Loading FAISS index from %s…", FAISS_DIR)
+        _FAISS_EMBEDDINGS = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+        _FAISS_DB = FAISS.load_local(
+            FAISS_DIR, _FAISS_EMBEDDINGS, allow_dangerous_deserialization=True
+        )
+    results = _FAISS_DB.similarity_search(query, k=k)
     return results
+
+
+def invalidate_faiss_cache():
+    """Clear the cached FAISS index (e.g. after re-ingestion)."""
+    global _FAISS_DB, _FAISS_EMBEDDINGS
+    _FAISS_DB = None
+    _FAISS_EMBEDDINGS = None
 
 
 def build_reasoning_response(llm, lab_values: str, context_docs) -> str:

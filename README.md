@@ -18,6 +18,7 @@ CareGraph AI is a clinical decision support assistant that grounds answers in yo
 3. HuggingFace Sentence-Transformers (local)
 4. FAISS
 5. FastAPI + Jinja2 (web UI)
+6. React + Vite (modern frontend)
 
 ## Project Structure
 ```text
@@ -26,18 +27,23 @@ Caregraph Ai/
 ├── medical_db/          # FAISS index (default)
 ├── ingest.py            # PDF ingestion -> FAISS
 ├── caregraph.py         # Shared RAG chain (JSON output)
+├── config.py            # Centralized config (models, paths, logging)
 ├── main.py              # CLI app (text-only)
 ├── vision_main.py       # Multimodal lab analysis (image + RAG)
-├── web_app.py           # FastAPI app
-├── templates/           # HTML templates
-├── static/              # CSS/JS
+├── web_app.py           # FastAPI app (CORS-enabled)
+├── templates/           # HTML templates (Jinja2 UI)
+├── static/              # CSS/JS (Jinja2 UI)
+├── frontend/            # React + Vite frontend
+├── requirements.txt     # Python dependencies
 ├── .env                 # Secrets (GOOGLE_API_KEY)
 └── .env.example         # Env template
 ```
 
 ## Setup
-1. Create `.env`:
+1. Create `.env` (or copy the example):
 ```
+cp .env.example .env
+# then edit .env and add your key
 GOOGLE_API_KEY=your_key_here
 ```
 
@@ -48,25 +54,21 @@ FAISS_DIR=medical_db
 
 3. Install dependencies (inside venv):
 ```
-./venv/bin/python -m pip install \\
-  langchain langchain-community langchain-google-genai \\
-  langchain-huggingface langchain-text-splitters \\
-  faiss-cpu pypdf sentence-transformers \\
-  fastapi uvicorn jinja2 python-dotenv
+pip install -r requirements.txt
 ```
 
 ## Ingest PDFs
 1. Put PDFs into `data/`.
 2. Run ingestion:
 ```
-./venv/bin/python ingest.py
+python ingest.py
 ```
 
 This creates the FAISS index in `medical_db` (or `FAISS_DIR` if set).
 
 ## Run CLI (Text RAG)
 ```
-./venv/bin/python main.py
+python main.py
 ```
 
 Responses are JSON with fields:
@@ -79,9 +81,17 @@ Responses are JSON with fields:
 ```
 ## Run Web UI
 ```
-./venv/bin/python -m uvicorn web_app:app --reload --port 8000
+uvicorn web_app:app --reload --port 8000
 ```
 Open `http://127.0.0.1:8000`.
+
+### React Frontend (optional)
+```
+cd frontend
+npm install
+npm run dev
+```
+Opens at `http://localhost:5173` and proxies `/api` to the FastAPI backend.
 
 ### Uploads (PDF + Image)
 1. Use the upload form in the web UI.

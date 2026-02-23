@@ -1,9 +1,11 @@
+import logging
 import shutil
 import time
 from pathlib import Path
 from typing import List, Optional
 
 from fastapi import FastAPI, Request, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,10 +14,22 @@ from langchain_core.messages import HumanMessage
 from langchain_core.output_parsers import JsonOutputParser
 
 from caregraph import CareGraphResponse, get_chain
+from config import GEMINI_MODEL
 from ingest import build_medical_knowledge_base
-from vision_main import encode_image_to_base64, extract_biomarkers, search_faiss
+from vision_main import encode_image_to_base64, extract_biomarkers, search_faiss, invalidate_faiss_cache
+
+logger = logging.getLogger("caregraph.web")
 
 app = FastAPI(title="CareGraph AI")
+
+# CORS — allow the Vite dev server and any localhost origin
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -38,7 +52,7 @@ async def ask(payload: dict):
 
     try:
         chain = get_chain()
-        answer = chain.invoke(question)
+        answer = await chain.ainvoke(question)
         if isinstance(answer, dict):
             return answer
         return JSONResponse({"error": "Model did not return valid JSON."}, status_code=500)
@@ -73,7 +87,7 @@ def _build_vision_json_response(lab_values: str, docs) -> dict:
     )
 
     llm = ChatGoogleGenerativeAI(
-        model="models/gemini-2.5-flash",
+        model=GEMINI_MODEL,
         temperature=0.2,
     )
     response = llm.invoke([HumanMessage(content=prompt)])
@@ -102,6 +116,7 @@ async def upload(
     if saved_pdfs:
         try:
             build_medical_knowledge_base()
+            invalidate_faiss_cache()  # clear cached FAISS so next search picks up new docs
         except Exception as exc:
             return JSONResponse({"error": f"Ingest failed: {exc}"}, status_code=500)
 
@@ -116,7 +131,7 @@ async def upload(
         try:
             image_b64 = encode_image_to_base64(str(target))
             vision_llm = ChatGoogleGenerativeAI(
-                model="models/gemini-2.5-flash",
+                model=GEMINI_MODEL,
                 temperature=0.1,
             )
             lab_values = extract_biomarkers(vision_llm, image_b64)

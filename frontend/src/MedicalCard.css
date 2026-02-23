@@ -69,3 +69,29 @@
     color: var(--text-main);
     white-space: pre-wrap;
 }
+
+/* ── Dark-mode overrides ── */
+@media (prefers-color-scheme: dark) {
+    .mc-disclaimer {
+        background-color: #451a03;
+        border-color: #92400e;
+        color: #fde68a;
+    }
+
+    .mc-rationale {
+        background-color: #042f2e;
+        border-color: #115e59;
+    }
+
+    .mc-report {
+        background-color: #1e293b;
+    }
+
+    .text-warning {
+        color: #fbbf24;
+    }
+
+    .text-success {
+        color: #34d399;
+    }
+}
