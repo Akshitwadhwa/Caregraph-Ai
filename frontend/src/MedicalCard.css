@@ -1,0 +1,71 @@
+.medical-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mc-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-main);
+}
+
+.mc-disclaimer {
+    background-color: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+}
+
+.mc-rationale {
+    background-color: #f0fdfa;
+    border-color: #ccfbf1;
+}
+
+.mc-report {
+    background-color: #f8fafc;
+    border-left: 4px solid var(--primary);
+}
+
+.mc-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.text-warning {
+    color: #d97706;
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.text-success {
+    color: #10b981;
+}
+
+.mc-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mc-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin: 0;
+    font-weight: 600;
+}
+
+.mc-content p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-main);
+    white-space: pre-wrap;
+}
